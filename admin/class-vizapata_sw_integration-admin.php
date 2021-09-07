@@ -47,12 +47,21 @@ class Vizapata_sw_integration_Admin
 	{
 		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_username');
 		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_apikey');
+		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_api_url');
 
 		add_settings_section(
 			'vizapata_sw_integration_general',
 			__('Siigo cloud API settings', 'vizapata_sw_integration'),
 			array($this, 'general_settings_section_callback'),
 			'vizapata_sw_integration_options'
+		);
+		
+		add_settings_field(
+			'vizapata_sw_integration_siigo_api_url',
+			sprintf('%s: *', __('Siigo API URL', 'vizapata_sw_integration')),
+			array($this, 'siigo_api_url'),
+			'vizapata_sw_integration_options',
+			'vizapata_sw_integration_general'
 		);
 
 		add_settings_field(
@@ -70,6 +79,12 @@ class Vizapata_sw_integration_Admin
 			'vizapata_sw_integration_options',
 			'vizapata_sw_integration_general'
 		);
+	}
+
+	public function siigo_api_url()
+	{
+		printf('<input type="url" class="regular-text" name="vizapata_sw_integration_siigo_api_url" value="%s" required pattern="https://.*" placeholder="https://example.com/">', get_option('vizapata_sw_integration_siigo_api_url'));
+		printf('<p class="description" id="tagline-description">%s.</p>', __('The URL of the Siigo cloud', 'vizapata_sw_integration'));
 	}
 
 	public function siigo_username()
