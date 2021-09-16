@@ -5,6 +5,10 @@ class Vizapata_sw_integration_Admin
 
 	private $plugin_name;
 	private $version;
+	private const state_code_field = 'cod_depto';
+	private const city_code_field = 'cod_mpio';
+	private const state_name_field = 'dpto';
+	private const city_name_field = 'nom_mpio';
 
 	public function __construct($plugin_name, $version)
 	{
@@ -55,7 +59,7 @@ class Vizapata_sw_integration_Admin
 			array($this, 'general_settings_section_callback'),
 			'vizapata_sw_integration_options'
 		);
-		
+
 		add_settings_field(
 			'vizapata_sw_integration_siigo_api_url',
 			sprintf('%s: *', __('Siigo API URL', 'vizapata_sw_integration')),
@@ -101,5 +105,88 @@ class Vizapata_sw_integration_Admin
 
 	public function general_settings_section_callback()
 	{
+	}
+
+	private function load_location_codes()
+	{
+		$deptos = json_decode(file_get_contents(plugin_dir_path(__FILE__)  . 'CO.json'), true);
+		$codes = array();
+		foreach ($deptos as $depto) {
+			$state_name = strtoupper(remove_accents($depto[self::state_name_field]));
+			$city_name = strtoupper(remove_accents($depto[self::city_name_field]));
+			if (!isset($codes[$state_name])) {
+				$codes[$state_name] = array();
+				$codes[$state_name]['code'] = str_pad($depto[self::state_code_field], 2, '0', STR_PAD_LEFT);
+				$codes[$state_name]['cities'] = array();
+			}
+			$codes[$state_name]['cities'][$city_name] = $depto[self::city_code_field];
+		}
+		return $codes;
+	}
+
+	public function woocommerce_payment_complete($order_id)
+	{
+	}
+
+	private function build_customer_order($order)
+	{
+		$order_meta = get_post_meta($order->get_id());
+		$codes = $this->load_location_codes();
+		$states = apply_filters('woocommerce_states', array());
+		$country_code = 'CO';
+
+		$billing_state_abbr = $order_meta['_billing_state'][0];
+		$billing_state_name = strtoupper(remove_accents($states[$country_code][$billing_state_abbr]));
+		$billing_city_name = strtoupper(remove_accents($order_meta['_billing_city'][0]));
+		$billing_state_code = $codes[$billing_state_name]['code'];
+		$billing_city_code = $codes[$billing_state_name]['cities'][$billing_city_name];
+
+		$person_type = $order_meta['_billing_person_type'][0];
+		$is_person = $person_type == 'Person';
+		$id_type = $is_person ? 13 : 31;
+		$name = array();
+		$billing_pone = array(
+			'indicative' => 57,
+			'number' => $order_meta['_billing_phone'][0],
+		);
+		$contacts = array(
+			'first_name' => $order_meta['_billing_firstname'][0],
+			'last_name' => $order_meta['_billing_lastname'][0],
+			'email' => $order_meta['_billing_email'][0],
+			'phone' => $billing_pone,
+		);
+
+		if ($is_person) {
+			array_push($name, $order_meta['_billing_firstname'][0]);
+			array_push($name, $order_meta['_billing_lastname'][0]);
+		} else {
+			array_push($name, $order_meta['_billing_company'][0]);
+			$contacts['first_name'] = $order_meta['_billing_contact_firstname'][0];
+			$contacts['last_name'] = $order_meta['_billing_contact_lastname'][0];
+		}
+
+		$customer = array(
+			'order_id' => $order->get_id(),
+			'type' => 'Customer',
+			'person_type' => $person_type, // Person, Company
+			'id_type' => $id_type,
+			'identification' => $order_meta['_billing_identification'][0],
+			'check_digit' => $order_meta['_billing_check_digit'][0],
+			'name' => $name,
+			'address' => array(
+				'address' => $order_meta['_billing_address'][0],
+				'city' => array(
+					'country_code' => $country_code,
+					'city_code' => $billing_city_code,
+					'state_code' => $billing_state_code,
+				),
+				'postal_code' => '',
+			),
+			'phones' => array($billing_pone),
+			'contacts' => array($contacts),
+			'comments' => __('User created by the Woocommerce-Siigo integration app', 'vizapata_sw_integration')
+		);
+
+		return $customer;
 	}
 }
