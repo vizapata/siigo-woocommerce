@@ -53,11 +53,32 @@ class Vizapata_Siigo_Proxy
     $response = wp_safe_remote_get($this->apiUrls['customers'] . '?identification=' . $documentNumber, $request);
     if ($this->isResponseOK($response)) {
       $contents = json_decode($response['body']);
-      if ($contents->pagination->total_results == 1) return $contents->results;
+      if ($contents->pagination->total_results == 1) return $contents->results[0];
       if ($contents->pagination->total_results == 0) return false;
       throw new Exception('Multiple customers found');
     }
     throw new Exception('Error trying to find the customer details');
+  }
+
+  public function createCustomer($customer)
+  {
+    if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
+    $request = array(
+      'headers' => array(
+        'content-type' => 'application/json; charset=utf-8',
+        'Authorization' => 'Bearer ' . $this->authInfo->access_token
+      ),
+      'body' => json_encode($customer),
+    );
+
+    $response = wp_safe_remote_post($this->apiUrls['customers'], $request);
+    if ($this->isResponseOK($response)) {
+      return json_decode($response['body']);
+    }
+    $error = 'Error trying to create the new customer';
+    if (is_wp_error($response)) $error = $response->get_error_message();
+    else if ($this->isResponseError($response)) $error = $this->getResponseErrorMessage($response);
+    throw new Exception($error);
   }
 
   private function isAuthenticated()
@@ -69,6 +90,23 @@ class Vizapata_Siigo_Proxy
 
   private function isResponseOK($response)
   {
-    return !is_wp_error($response) && isset($response['response']) && isset($response['response']['code']) && $response['response']['code'] === 200;
+    return !is_wp_error($response) && isset($response['response']) && isset($response['response']['code']) && $response['response']['code'] >= 200 && $response['response']['code'] < 300;
+  }
+
+  private function isResponseError($response)
+  {
+    return !is_wp_error($response) && isset($response['response']) && isset($response['body']) && isset($response['response']['code']) && $response['response']['code'] >= 400;
+  }
+
+  private function getResponseErrorMessage($response)
+  {
+    $error = '';
+    $body = json_decode($response['body'], true);
+    if (isset($body['Errors'])) {
+      foreach ($body['Errors'] as $response_error) {
+        $error .= $response_error['Message'] . ', ';
+      }
+    }
+    return $error;
   }
 }

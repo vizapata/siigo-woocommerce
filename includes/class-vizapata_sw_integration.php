@@ -24,6 +24,7 @@ class Vizapata_sw_integration
 	{
 		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-vizapata_sw_integration-loader.php';
 		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-vizapata_sw_integration-i18n.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-vizapata-siigo-proxy.php';
 		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-vizapata_sw_integration-admin.php';
 		$this->loader = new Vizapata_sw_integration_Loader();
 	}

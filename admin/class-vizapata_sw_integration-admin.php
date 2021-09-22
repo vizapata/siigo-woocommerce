@@ -126,6 +126,15 @@ class Vizapata_sw_integration_Admin
 
 	public function woocommerce_payment_complete($order_id)
 	{
+		$order = wc_get_order($order_id);
+		$local_customer = $this->build_customer_order($order);
+
+		$siigo_proxy = new Vizapata_Siigo_Proxy();
+		$siigo_proxy->authenticate();
+		$remote_customer = $siigo_proxy->findCustomerByDocument($local_customer['identification']);
+		if($remote_customer === false){
+			$remote_customer = $siigo_proxy->createCustomer($local_customer);
+		}
 	}
 
 	private function build_customer_order($order)
@@ -146,7 +155,6 @@ class Vizapata_sw_integration_Admin
 		$id_type = $is_person ? 13 : 31;
 		$name = array();
 		$billing_pone = array(
-			'indicative' => 57,
 			'number' => $order_meta['_billing_phone'][0],
 		);
 		$contacts = array(
@@ -166,14 +174,15 @@ class Vizapata_sw_integration_Admin
 		}
 
 		$customer = array(
-			'order_id' => $order->get_id(),
 			'type' => 'Customer',
 			'person_type' => $person_type, // Person, Company
-			'id_type' => $id_type,
+			'id_type' => "$id_type",
 			'identification' => $order_meta['_billing_identification'][0],
 			'check_digit' => $order_meta['_billing_check_digit'][0],
 			'name' => $name,
-			'fiscal_responsibilities' => array("R-99-PN"),
+			'fiscal_responsibilities' => array(
+				array("code" => "R-99-PN")
+			),
 			'address' => array(
 				'address' => $order_meta['_billing_address'][0],
 				'city' => array(
