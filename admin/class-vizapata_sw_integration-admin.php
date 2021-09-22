@@ -173,6 +173,7 @@ class Vizapata_sw_integration_Admin
 			'identification' => $order_meta['_billing_identification'][0],
 			'check_digit' => $order_meta['_billing_check_digit'][0],
 			'name' => $name,
+			'fiscal_responsibilities' => array("R-99-PN"),
 			'address' => array(
 				'address' => $order_meta['_billing_address'][0],
 				'city' => array(
