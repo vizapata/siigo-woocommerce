@@ -8,7 +8,7 @@ class Vizapata_Siigo_Proxy
 
   public function __construct()
   {
-    $baseApiUrl = get_option('vizapata_sw_integration_siigo_api_url');
+    $baseApiUrl = get_option('wc_settings_woo_siigo_api_url');
     $this->apiUrls = array(
       'auth' => $baseApiUrl . '/auth',
       'customers' => $baseApiUrl . '/v1/customers',
@@ -24,8 +24,8 @@ class Vizapata_Siigo_Proxy
         'content-type' => 'application/json; charset=utf-8'
       ),
       'body' => json_encode(array(
-        'username' => get_option('vizapata_sw_integration_siigo_username'),
-        'access_key' => get_option('vizapata_sw_integration_siigo_apikey'),
+        'username' => get_option('wc_settings_woo_siigo_username'),
+        'access_key' => get_option('wc_settings_woo_siigo_api_key'),
       )),
     );
 

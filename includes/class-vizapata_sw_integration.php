@@ -39,10 +39,13 @@ class Vizapata_sw_integration
 	{
 		$plugin_admin = new Vizapata_sw_integration_Admin($this->get_plugin_name(), $this->get_version());
 
-		$this->loader->add_action('admin_init', $plugin_admin, 'admin_init');
-		$this->loader->add_action('admin_menu', $plugin_admin, 'admin_menu');
 		$this->loader->add_action('woocommerce_payment_complete', $plugin_admin, 'woocommerce_payment_complete');
 		$this->loader->add_filter('plugin_action_links_' . $this->get_plugin_name() . '/' . $this->get_plugin_name() . '.php', $plugin_admin, 'plugin_action_links', 10, 4);
+		
+		// Woocommerce tab
+		$this->loader->add_filter('woocommerce_settings_tabs_array', $plugin_admin,  'add_settings_tab', 50);
+		$this->loader->add_action('woocommerce_settings_tabs_siigo_settings', $plugin_admin, 'settings_tab');
+		$this->loader->add_action('woocommerce_update_options_siigo_settings', $plugin_admin, 'update_settings');
 	}
 
 	public function run()
