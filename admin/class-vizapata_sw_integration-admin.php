@@ -52,6 +52,11 @@ class Vizapata_sw_integration_Admin
 		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_username');
 		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_apikey');
 		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_api_url');
+		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_invoice_id');
+		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_taxes_id');
+		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_seller_id');
+		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_warehouse_id');
+		register_setting('vizapata_sw_integration_options', 'vizapata_sw_integration_siigo_observations');
 
 		add_settings_section(
 			'vizapata_sw_integration_general',
@@ -83,6 +88,46 @@ class Vizapata_sw_integration_Admin
 			'vizapata_sw_integration_options',
 			'vizapata_sw_integration_general'
 		);
+
+		add_settings_field(
+			'vizapata_sw_integration_siigo_invoice_id',
+			sprintf('%s: *', __('Document type ID', 'vizapata_sw_integration')),
+			array($this, 'siigo_invoice_id'),
+			'vizapata_sw_integration_options',
+			'vizapata_sw_integration_general'
+		);
+
+		add_settings_field(
+			'vizapata_sw_integration_siigo_taxes_id',
+			sprintf('%s: *', __('Taxes ID', 'vizapata_sw_integration')),
+			array($this, 'siigo_taxes_id'),
+			'vizapata_sw_integration_options',
+			'vizapata_sw_integration_general'
+		);
+
+		add_settings_field(
+			'vizapata_sw_integration_siigo_seller_id',
+			sprintf('%s: *', __('Seller ID', 'vizapata_sw_integration')),
+			array($this, 'siigo_seller_id'),
+			'vizapata_sw_integration_options',
+			'vizapata_sw_integration_general'
+		);
+
+		add_settings_field(
+			'vizapata_sw_integration_siigo_warehouse_id',
+			sprintf('%s: *', __('Wharehouse ID', 'vizapata_sw_integration')),
+			array($this, 'siigo_warehouse_id'),
+			'vizapata_sw_integration_options',
+			'vizapata_sw_integration_general'
+		);
+
+		add_settings_field(
+			'vizapata_sw_integration_siigo_observations',
+			sprintf('%s: *', __('Invoice observations', 'vizapata_sw_integration')),
+			array($this, 'siigo_observations'),
+			'vizapata_sw_integration_options',
+			'vizapata_sw_integration_general'
+		);
 	}
 
 	public function siigo_api_url()
@@ -101,6 +146,36 @@ class Vizapata_sw_integration_Admin
 	{
 		printf('<input type="text" class="regular-text" name="vizapata_sw_integration_siigo_apikey" value="%s" required>', get_option('vizapata_sw_integration_siigo_apikey'));
 		printf('<p class="description" id="tagline-description">%s.</p>', __('The API KEY used to connect with the Siigo cloud', 'vizapata_sw_integration'));
+	}
+
+	public function siigo_invoice_id()
+	{
+		printf('<input type="text" class="regular-text" name="vizapata_sw_integration_siigo_invoice_id" value="%s" required>', get_option('vizapata_sw_integration_siigo_invoice_id'));
+		printf('<p class="description" id="tagline-description">%s.</p>', __('The identifier of the document type to be used. Please check in the Siigo cloud invoice document types', 'vizapata_sw_integration'));
+	}
+
+	public function siigo_taxes_id()
+	{
+		printf('<input type="text" class="regular-text" name="vizapata_sw_integration_siigo_taxes_id" value="%s" required>', get_option('vizapata_sw_integration_siigo_taxes_id'));
+		printf('<p class="description" id="tagline-description">%s.</p>', __('The identifier of the taxes aplicable for all products', 'vizapata_sw_integration'));
+	}
+
+	public function siigo_seller_id()
+	{
+		printf('<input type="text" class="regular-text" name="vizapata_sw_integration_siigo_seller_id" value="%s" required>', get_option('vizapata_sw_integration_siigo_seller_id'));
+		printf('<p class="description" id="tagline-description">%s.</p>', __('The ID for the seller associated to the orders. Please check in the Siigo cloud users', 'vizapata_sw_integration'));
+	}
+
+	public function siigo_warehouse_id()
+	{
+		printf('<input type="text" class="regular-text" name="vizapata_sw_integration_siigo_warehouse_id" value="%s" required>', get_option('vizapata_sw_integration_siigo_warehouse_id'));
+		printf('<p class="description" id="tagline-description">%s.</p>', __('The wharehouse ID where the products will beshipped from. Please check in the Siigo cloud wharehouse, if any', 'vizapata_sw_integration'));
+	}
+
+	public function siigo_observations()
+	{
+		printf('<input type="text" class="regular-text" name="vizapata_sw_integration_siigo_observations" value="%s" required>', get_option('vizapata_sw_integration_siigo_observations'));
+		printf('<p class="description" id="tagline-description">%s.</p>', __('Additional observations to include in generated invoices', 'vizapata_sw_integration'));
 	}
 
 	public function general_settings_section_callback()
@@ -126,15 +201,78 @@ class Vizapata_sw_integration_Admin
 
 	public function woocommerce_payment_complete($order_id)
 	{
+		$siigo_proxy = new Vizapata_Siigo_Proxy();
+
 		$order = wc_get_order($order_id);
 		$local_customer = $this->build_customer_order($order);
-
-		$siigo_proxy = new Vizapata_Siigo_Proxy();
-		$siigo_proxy->authenticate();
-		$remote_customer = $siigo_proxy->findCustomerByDocument($local_customer['identification']);
-		if($remote_customer === false){
-			$remote_customer = $siigo_proxy->createCustomer($local_customer);
+		
+		try {
+			$siigo_proxy->authenticate();
+			$remote_customer = $siigo_proxy->findCustomerByDocument($local_customer['identification']);
+			if ($remote_customer === false) {
+				$remote_customer = $siigo_proxy->createCustomer($local_customer);
+			}
+			update_post_meta($order_id, '_siigo_customer_id', $remote_customer->id);
+			$local_order = $this->build_order($order, $local_customer);
+			$remote_order = $siigo_proxy->createInvoice($local_order);
+			update_post_meta($order_id, '_siigo_invoice_id', $remote_order->id);
+			update_post_meta($order_id, '_siigo_invoice_number', $remote_order->number);
+			update_post_meta($order_id, '_siigo_invoice_document_id', $remote_order->document->id);
+			update_post_meta($order_id, '_siigo_invoice_name', $remote_order->name);
+		} catch (Exception $ex) {
+			// TODO: add exception as a local order note 
 		}
+	}
+
+	private function build_order($order, $customer)
+	{
+		$shipping_products = array(
+			'5000' => '1',
+			'10000' => '2',
+			'15000' => '3',
+			'20000' => '4',
+			'25000' => '5',
+		);
+		$items = array(
+			array(
+				'code' => $shipping_products[$order->get_shipping_total()],
+				'description' => __('Shipping', 'vizapata_sw_integration'),
+				'price' => $order->get_shipping_total(),
+				'quantity' => 1,
+			)
+		);
+		foreach ($order->get_items() as $item) {
+			$product = $item->get_product();
+			$new_item = array(
+				'code' => $product->get_sku(),
+				'description' => $product->get_name(),
+				'price' => $product->get_price(),
+				'quantity' => $item->get_quantity(),
+				'seller' => get_option('vizapata_sw_integration_siigo_seller_id'),
+				'wharehouse' => array(
+					'id' => get_option('vizapata_sw_integration_siigo_warehouse_id')
+				),
+				'taxes' => array(
+					'id' => get_option('vizapata_sw_integration_siigo_taxes_id')
+				)
+			);
+			array_push($items, $new_item);
+		}
+
+		$local_order = array(
+			'document' => array(
+				'id' => get_option('vizapata_sw_integration_siigo_invoice_id'),
+			),
+			'customer' => array(
+				'person_type' => $customer['person_type'],
+				'id_type' => $customer['id_type'],
+				'identification' => $customer['identification']
+			),
+			'seller' => get_option('vizapata_sw_integration_siigo_seller_id'),
+			'items' => $items,
+			'observations' => get_option('vizapata_sw_integration_siigo_observations'),
+		);
+		return $local_order;
 	}
 
 	private function build_customer_order($order)

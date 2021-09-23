@@ -81,6 +81,27 @@ class Vizapata_Siigo_Proxy
     throw new Exception($error);
   }
 
+  public function createInvoice($order)
+  {
+    if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
+    $request = array(
+      'headers' => array(
+        'content-type' => 'application/json; charset=utf-8',
+        'Authorization' => 'Bearer ' . $this->authInfo->access_token
+      ),
+      'body' => json_encode($order),
+    );
+
+    $response = wp_safe_remote_post($this->apiUrls['invoices'], $request);
+    if ($this->isResponseOK($response)) {
+      return json_decode($response['body']);
+    }
+    $error = 'Error trying to create the invoice';
+    if (is_wp_error($response)) $error = $response->get_error_message();
+    else if ($this->isResponseError($response)) $error = $this->getResponseErrorMessage($response);
+    throw new Exception($error);
+  }
+
   private function isAuthenticated()
   {
     return $this->authInfo != null &&
