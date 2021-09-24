@@ -14,6 +14,11 @@ class Vizapata_Siigo_Proxy
       'customers' => $baseApiUrl . '/v1/customers',
       'products' => $baseApiUrl . '/v1/products',
       'invoices' => $baseApiUrl . '/v1/invoices',
+      'users' => $baseApiUrl . '/v1/users',
+      'warehouses' => $baseApiUrl . '/v1/warehouses',
+      'document-types' => $baseApiUrl . '/v1/document-types',
+      'payment-types' => $baseApiUrl . '/v1/payment-types',
+      'taxes' => $baseApiUrl . '/v1/taxes',
     );
   }
 
@@ -100,6 +105,54 @@ class Vizapata_Siigo_Proxy
     if (is_wp_error($response)) $error = $response->get_error_message();
     else if ($this->isResponseError($response)) $error = $this->getResponseErrorMessage($response);
     throw new Exception($error);
+  }
+
+  private function get_list($api, $params = array())
+  {
+    if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
+    $request = array(
+      'headers' => array(
+        'content-type' => 'application/json; charset=utf-8',
+        'Authorization' => 'Bearer ' . $this->authInfo->access_token
+      )
+    );
+    $response = wp_safe_remote_get(add_query_arg($params, $this->apiUrls[$api]), $request);
+    if ($this->isResponseOK($response)) {
+      return json_decode($response['body']);
+    }
+    $error = 'Error trying to get the requested list';
+    if (is_wp_error($response)) $error = $response->get_error_message();
+    else if ($this->isResponseError($response)) $error = $this->getResponseErrorMessage($response);
+    throw new Exception($error);
+  }
+
+  private function get_full_page_list($api)
+  {
+    return $this->get_list($api)->results;
+  }
+  public function get_users()
+  {
+    return $this->get_full_page_list('users');
+  }
+  public function get_products()
+  {
+    return $this->get_full_page_list('products');
+  }
+  public function get_warehouses()
+  {
+    return $this->get_list('warehouses');
+  }
+  public function get_document_types()
+  {
+    return $this->get_list('document-types', array('type' => 'FV'));
+  }
+  public function get_payment_types()
+  {
+    return $this->get_list('payment-types', array('document_type' => 'FV'));
+  }
+  public function get_taxes()
+  {
+    return $this->get_list('taxes');
   }
 
   private function isAuthenticated()
