@@ -14,6 +14,7 @@ class Vizapata_Siigo_Proxy
       'customers' => $baseApiUrl . '/v1/customers',
       'products' => $baseApiUrl . '/v1/products',
       'invoices' => $baseApiUrl . '/v1/invoices',
+      'invoice_pdf' => $baseApiUrl . '/v1/invoices/[INVOICE_ID]/pdf',
       'users' => $baseApiUrl . '/v1/users',
       'warehouses' => $baseApiUrl . '/v1/warehouses',
       'document-types' => $baseApiUrl . '/v1/document-types',
@@ -110,7 +111,7 @@ class Vizapata_Siigo_Proxy
     throw new Exception($error);
   }
 
-  private function get_list($api, $params = array())
+  private function get_list($api, $queryParams = array(), $pathVariables = array())
   {
     if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
     $request = array(
@@ -119,7 +120,11 @@ class Vizapata_Siigo_Proxy
         'Authorization' => 'Bearer ' . $this->authInfo->access_token
       )
     );
-    $response = wp_safe_remote_get(add_query_arg($params, $this->apiUrls[$api]), $request);
+    $url = $this->apiUrls[$api];
+    foreach ($pathVariables as $param => $value) {
+      $url = str_replace("[$param]", $value, $url);
+    }
+    $response = wp_safe_remote_get(add_query_arg($queryParams, $url), $request);
     if ($this->isResponseOK($response)) {
       return json_decode($response['body']);
     }
@@ -127,6 +132,12 @@ class Vizapata_Siigo_Proxy
     if (is_wp_error($response)) $error = $response->get_error_message();
     else if ($this->isResponseError($response)) $error = $this->getResponseErrorMessage($response);
     throw new Exception($error);
+  }
+
+  public function generate_invoice_pdf($invoice_id)
+  {
+    $invoice_data = $this->get_list('invoice_pdf', array(), array( 'INVOICE_ID' => $invoice_id));
+    return $invoice_data->base64;
   }
 
   private function get_full_page_list($api)

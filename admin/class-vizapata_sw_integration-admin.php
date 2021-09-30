@@ -64,7 +64,6 @@ class Vizapata_sw_integration_Admin
 			update_post_meta($order_id, '_siigo_customer_id', $remote_customer->id);
 			$remote_order = $siigo_proxy->createInvoice($local_order);
 			update_post_meta($order_id, '_siigo_invoice_id', $remote_order->id);
-			update_post_meta($order_id, '_siigo_invoice_number', $remote_order->number);
 			update_post_meta($order_id, '_siigo_invoice_name', $remote_order->name);
 			$order->add_order_note(sprintf(__('Invoice created with document number: %s', 'vizapata_sw_integration'), $remote_order->number));
 		} catch (Exception $ex) {
@@ -197,5 +196,36 @@ class Vizapata_sw_integration_Admin
 		);
 
 		return $customer;
+	}
+
+	public function download_electronic_invoice()
+	{
+		if (isset($_GET['post']) && isset($_GET['action']) && $_GET['action'] === 'download-invoice') {
+			check_admin_referer('_order' . $_GET['post']);
+			
+			$order = wc_get_order($_GET['post']);
+			$is_paid = $order->is_paid();
+			$invoice_id = get_post_meta($_GET['post'], '_siigo_invoice_id', true);
+			$invoice_number = get_post_meta($_GET['post'], '_siigo_invoice_name', true);
+
+			if ($is_paid && !empty($invoice_id)) {
+				$siigo_proxy = new Vizapata_Siigo_Proxy();
+				try {
+					$siigo_proxy->authenticate();
+					$invoice = base64_decode($siigo_proxy->generate_invoice_pdf($invoice_id));
+					header('Content-Type: application/pdf');
+					header('Cache-Control: public, must-revalidate, max-age=86400');
+					header('Expires: ' . gmdate('D, d M Y H:i:s', strtotime('+1 month')) . ' GMT'); // Date in the future
+					header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+					header('Content-Disposition: inline; filename="' . $invoice_number . '.pdf"');
+					echo $invoice;
+					exit;
+				} catch (Exception $ex) {
+					wp_die(__('Error during invoice request: ', 'vizapata_sw_integration') . $ex->getMessage());
+				}
+			} else {
+				wp_die(__('The order that you are looking for does not have any electronic invoice', 'vizapata_sw_integration'));
+			}
+		}
 	}
 }
