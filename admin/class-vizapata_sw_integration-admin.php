@@ -92,7 +92,7 @@ class Vizapata_sw_integration_Admin
 				'description' => $product->get_name(),
 				'price' => round($product->get_price() * 100 / (100 + $product_tax->percentage), 6),
 				'quantity' => $item->get_quantity(),
-				'warehouse'=> get_option('wc_settings_woo_siigo_warehouse_id'),
+				'warehouse' => get_option('wc_settings_woo_siigo_warehouse_id'),
 				'taxes' => array(
 					array(
 						'id' => $product_tax->id,
