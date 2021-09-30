@@ -59,52 +59,58 @@ class Vizapata_sw_integration_Admin
 			if ($remote_customer === false) {
 				$remote_customer = $siigo_proxy->createCustomer($local_customer);
 			}
+			$taxes = $siigo_proxy->get_taxes();
+			$local_order = $this->build_order($order, $local_customer, $taxes);
 			update_post_meta($order_id, '_siigo_customer_id', $remote_customer->id);
-			$local_order = $this->build_order($order, $local_customer);
 			$remote_order = $siigo_proxy->createInvoice($local_order);
 			update_post_meta($order_id, '_siigo_invoice_id', $remote_order->id);
 			update_post_meta($order_id, '_siigo_invoice_number', $remote_order->number);
 			update_post_meta($order_id, '_siigo_invoice_name', $remote_order->name);
-			$order->add_order_note(sprintf(__('Invoice created with document number: %s'), $remote_order->number));
+			$order->add_order_note(sprintf(__('Invoice created with document number: %s', 'vizapata_sw_integration'), $remote_order->number));
 		} catch (Exception $ex) {
-			$order->add_order_note(__('Error during invoice creation: ') . $ex->getMessage());
+			$order->add_order_note(__('Error during invoice creation: ', 'vizapata_sw_integration') . $ex->getMessage());
 		}
 	}
 
-	private function build_order($order, $customer)
+	private function find_tax_by_id($taxes, $tax_id)
+	{
+		$tax = array_filter($taxes, function ($item) use ($tax_id) {
+			return isset($item->id) && $item->id == $tax_id;
+		});
+		return array_values($tax)[0];
+	}
+
+	private function build_order($order, $customer, $taxes)
 	{
 		$items = array();
+		$product_tax  = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_taxes_id'));
+
 		foreach ($order->get_items() as $item) {
 			$product = $item->get_product();
 			$new_item = array(
 				'code' => $product->get_sku(),
 				'description' => $product->get_name(),
-				'price' => $product->get_price(),
+				'price' => round($product->get_price() * 100 / (100 + $product_tax->percentage), 6),
 				'quantity' => $item->get_quantity(),
-				'seller' => get_option('wc_settings_woo_siigo_seller_id'),
-				'warehouse' => array(
-					'id' => get_option('wc_settings_woo_siigo_warehouse_id')
-				),
+				'warehouse'=> get_option('wc_settings_woo_siigo_warehouse_id'),
 				'taxes' => array(
 					array(
-						'id' => get_option('wc_settings_woo_siigo_taxes_id'),
-						'value' => $order->get_item_tax($item),
+						'id' => $product_tax->id,
 					)
 				),
 			);
 			array_push($items, $new_item);
 		}
+		$shipping_tax = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_shipping_taxes_id'));
+
 		array_push($items, array(
 			'code' => get_option('wc_settings_woo_siigo_shipping_id'),
 			'description' => $order->get_shipping_method(),
-			'price' => $order->get_shipping_total(),
+			'price' => round($order->get_shipping_total() * 100 / (100 + $shipping_tax->percentage), 6),
 			'quantity' => 1,
 			'taxes' => array(
 				array(
-					'id' => get_option('wc_settings_woo_siigo_shipping_taxes_id'),
-					// TODO: use the order shipping tax even if the taxes are not enabled
-					// 'value' => $order->get_shipping_tax(),
-					'value' => 0.19 * $order->get_shipping_total(),
+					'id' => $shipping_tax->id,
 				),
 			)
 		));
@@ -115,18 +121,14 @@ class Vizapata_sw_integration_Admin
 				'id' => get_option('wc_settings_woo_siigo_invoice_id'),
 			),
 			'date' => date('Y-m-d'),
-			'customer' => array(
-				'person_type' => $customer['person_type'],
-				'id_type' => $customer['id_type'],
-				'identification' => $customer['identification']
-			),
+			'customer' => $customer,
 			'seller' => get_option('wc_settings_woo_siigo_seller_id'),
 			'items' => $items,
 			'observations' => get_option('wc_settings_woo_siigo_observations'),
 			'payments' => array(
 				array(
 					'id' => get_option('wc_settings_woo_siigo_payment_type_id'),
-					'price' => $order->get_total(),
+					'value' => $order->get_total(),
 				)
 			),
 		);
@@ -176,7 +178,7 @@ class Vizapata_sw_integration_Admin
 			'identification' => $order_meta['_billing_identification'][0],
 			'check_digit' => $order_meta['_billing_check_digit'][0],
 			'name' => $name,
-			'vat_responsible' => $order_meta['_billing_vat_responsible'][0],
+			'vat_responsible' => boolval($order_meta['_billing_vat_responsible'][0]),
 			'fiscal_responsibilities' => array(
 				array("code" => "R-99-PN")
 			),

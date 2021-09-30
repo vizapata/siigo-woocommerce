@@ -62,7 +62,10 @@ class Vizapata_Siigo_Proxy
       if ($contents->pagination->total_results == 0) return false;
       throw new Exception('Multiple customers found');
     }
-    throw new Exception('Error trying to find the customer details');
+    $error = 'Error trying to find the customer details';
+    if (is_wp_error($response)) $error = $response->get_error_message();
+    else if ($this->isResponseError($response)) $error = $this->getResponseErrorMessage($response);
+    throw new Exception($error);
   }
 
   public function createCustomer($customer)

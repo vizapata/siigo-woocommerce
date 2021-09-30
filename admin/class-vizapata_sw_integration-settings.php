@@ -141,7 +141,7 @@ class Vizapata_sw_integration_Settings
         );
         foreach ($list as $item) {
           if ($item->active) {
-            $shipping_setting['options'][$item->id] = $item->name;
+            $shipping_setting['options'][$item->code] = $item->name;
           }
         }
 
