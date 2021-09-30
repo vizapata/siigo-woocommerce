@@ -43,6 +43,7 @@ class Vizapata_sw_integration
 
 		$this->loader->add_action('woocommerce_payment_complete', $plugin_admin, 'woocommerce_payment_complete');
 		$this->loader->add_filter('plugin_action_links_' . $this->get_plugin_name() . '/' . $this->get_plugin_name() . '.php', $plugin_admin, 'plugin_action_links', 10, 4);
+		$this->loader->add_filter('http_request_timeout', $settings, 'http_request_timeout', 10, 2);
 		
 		// Woocommerce tab
 		$this->loader->add_filter('woocommerce_settings_tabs_array', $settings,  'add_settings_tab', 50);

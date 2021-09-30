@@ -215,4 +215,13 @@ class Vizapata_sw_integration_Settings
 
     return apply_filters('wc_settings_tab_siigo_settings', array_merge($api_settings, $siigo_settings));
   }
+
+  public function http_request_timeout($timeout, $url)
+  {
+    $api_url = get_option('wc_settings_woo_siigo_api_url');
+    if ($api_url && strpos($url, $api_url) !== false) {
+      $timeout = 15;
+    }
+    return $timeout;
+  }
 }
