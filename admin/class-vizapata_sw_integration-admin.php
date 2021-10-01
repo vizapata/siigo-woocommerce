@@ -103,7 +103,7 @@ class Vizapata_sw_integration_Admin
 			update_post_meta($order_id, '_siigo_invoice_id', $remote_order->id);
 			update_post_meta($order_id, '_siigo_invoice_name', $remote_order->name);
 
-			$response['message'] = sprintf(__('Invoice created with document number: %s', 'vizapata_sw_integration'), $remote_order->number);
+			$response['message'] = sprintf(__('Invoice created with document number: %s', 'vizapata_sw_integration'), $remote_order->name);
 			$order->add_order_note($response['message']);
 		} catch (Exception $ex) {
 			$response['error'] = true;
