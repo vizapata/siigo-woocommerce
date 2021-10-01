@@ -4,11 +4,12 @@ $invoice_number = get_post_meta($post->ID, '_siigo_invoice_name', true);
 $order = wc_get_order($post->ID);
 $is_paid = $order->is_paid();
 ?>
-<div>
+<div id="vizapata_sw_integration_invoice_metabox">
   <?php if (!$is_paid) { ?>
     <p><?php _e('The order has no payment yet', 'vizapata_sw_integration'); ?></p>
   <?php } else if (empty($invoice_id)) { ?>
     <p><?php _e('The order is paid but the electronic invoice was not generated yet', 'vizapata_sw_integration'); ?></p>
+    <div class="messages"></div>
     <button type="button" class="button button-secondary"><?php _e('Generate electronic invoice', 'vizapata_sw_integration') ?></button>
   <?php } else {
     $url = add_query_arg(

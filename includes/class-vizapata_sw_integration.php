@@ -45,6 +45,7 @@ class Vizapata_sw_integration
 
 		$this->loader->add_action('woocommerce_payment_complete', $plugin_admin, 'woocommerce_payment_complete');
 		$this->loader->add_action('init', $plugin_admin, 'download_electronic_invoice');
+		$this->loader->add_action('wp_ajax_vizapata_sw_integration_generate_invoice', $plugin_admin, 'generate_invoice_ajax');
 		$this->loader->add_filter('plugin_action_links_' . $this->get_plugin_name() . '/' . $this->get_plugin_name() . '.php', $plugin_admin, 'plugin_action_links', 10, 4);
 		$this->loader->add_filter('http_request_timeout', $settings, 'http_request_timeout', 10, 2);
 
@@ -55,6 +56,7 @@ class Vizapata_sw_integration
 
 		// Order settings
 		$this->loader->add_action('add_meta_boxes', $order, 'add_meta_boxes');
+		$this->loader->add_action('admin_enqueue_scripts', $order, 'admin_enqueue_scripts');
 	}
 
 	public function run()

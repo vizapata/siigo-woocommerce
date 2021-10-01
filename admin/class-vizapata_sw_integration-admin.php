@@ -52,8 +52,28 @@ class Vizapata_sw_integration_Admin
 		$this->generate_electronic_invoice($order_id);
 	}
 
+	public function generate_invoice_ajax()
+	{
+		check_ajax_referer('create-electronic-invoice', 'security');
+		$order_id = absint($_POST['post_id']);
+		$response = $this->generate_electronic_invoice($order_id);
+		if (!$response['error']) {
+			ob_start();
+			$order = new Vizapata_sw_integration_Order();
+			$post = get_post($order_id);
+			$order->the_meta_box($post);
+			$response['content'] = ob_get_clean();
+		}
+		wp_send_json($response);
+	}
+
 	public function generate_electronic_invoice($order_id)
 	{
+		$response = array(
+			'error' => false,
+			'message' => '',
+		);
+
 		if ($this->invoice_exists($order_id)) return;
 		$siigo_proxy = new Vizapata_Siigo_Proxy();
 		$order = wc_get_order($order_id);
@@ -71,10 +91,15 @@ class Vizapata_sw_integration_Admin
 			$remote_order = $siigo_proxy->createInvoice($local_order);
 			update_post_meta($order_id, '_siigo_invoice_id', $remote_order->id);
 			update_post_meta($order_id, '_siigo_invoice_name', $remote_order->name);
-			$order->add_order_note(sprintf(__('Invoice created with document number: %s', 'vizapata_sw_integration'), $remote_order->number));
+
+			$response['message'] = sprintf(__('Invoice created with document number: %s', 'vizapata_sw_integration'), $remote_order->number);
+			$order->add_order_note($response['message']);
 		} catch (Exception $ex) {
-			$order->add_order_note(__('Error during invoice creation: ', 'vizapata_sw_integration') . $ex->getMessage());
+			$response['error'] = true;
+			$response['message'] = __('Error during invoice creation: ', 'vizapata_sw_integration') . $ex->getMessage();
+			$order->add_order_note($response['message']);
 		}
+		return $response;
 	}
 
 	private function find_tax_by_id($taxes, $tax_id)
