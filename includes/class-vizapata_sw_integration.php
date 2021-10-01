@@ -44,6 +44,7 @@ class Vizapata_sw_integration
 		$order = new Vizapata_sw_integration_Order();
 
 		$this->loader->add_action('woocommerce_payment_complete', $plugin_admin, 'woocommerce_payment_complete');
+		$this->loader->add_action('woocommerce_order_status_changed', $plugin_admin, 'woocommerce_order_status_changed', 10, 3);
 		$this->loader->add_action('init', $plugin_admin, 'download_electronic_invoice');
 		$this->loader->add_action('wp_ajax_vizapata_sw_integration_generate_invoice', $plugin_admin, 'generate_invoice_ajax');
 		$this->loader->add_filter('plugin_action_links_' . $this->get_plugin_name() . '/' . $this->get_plugin_name() . '.php', $plugin_admin, 'plugin_action_links', 10, 4);

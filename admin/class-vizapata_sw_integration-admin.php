@@ -52,6 +52,13 @@ class Vizapata_sw_integration_Admin
 		$this->generate_electronic_invoice($order_id);
 	}
 
+	public function woocommerce_order_status_changed($order_id, $from, $to)
+	{
+		if ($to === 'completed') {
+			$this->generate_electronic_invoice($order_id);
+		}
+	}
+
 	public function generate_invoice_ajax()
 	{
 		check_ajax_referer('create-electronic-invoice', 'security');
