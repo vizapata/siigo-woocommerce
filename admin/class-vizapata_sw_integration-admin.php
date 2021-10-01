@@ -228,4 +228,8 @@ class Vizapata_sw_integration_Admin
 			}
 		}
 	}
+
+	public function invoice_exists($order_id){
+		return !empty(get_post_meta($order_id, '_siigo_invoice_id', true));
+	}
 }
