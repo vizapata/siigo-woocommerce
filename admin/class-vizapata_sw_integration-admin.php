@@ -49,6 +49,11 @@ class Vizapata_sw_integration_Admin
 
 	public function woocommerce_payment_complete($order_id)
 	{
+		$this->generate_electronic_invoice($order_id);
+	}
+
+	public function generate_electronic_invoice($order_id)
+	{
 		if ($this->invoice_exists($order_id)) return;
 		$siigo_proxy = new Vizapata_Siigo_Proxy();
 		$order = wc_get_order($order_id);
@@ -230,13 +235,14 @@ class Vizapata_sw_integration_Admin
 		}
 	}
 
-	public function load_invoice_id($order_id){
+	public function load_invoice_id($order_id)
+	{
 		return get_post_meta($order_id, '_siigo_invoice_id', true);
 	}
 
 	public function invoice_exists($order_id)
 	{
 		$invoice_id = $this->load_invoice_id($order_id);
-		return $invoice_id!==false && !empty($invoice_id);
+		return $invoice_id !== false && !empty($invoice_id);
 	}
 }
