@@ -9,7 +9,7 @@
  * Plugin Name:       Siigo Woocommerce Integration
  * Plugin URI:        https://github.com/vizapata/siigo-woocommerce
  * Description:       A plugin to allow the integration between a woocommerce store and the siiglo cloud system
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            Victor Zapata
  * Author URI:        https://github.com/vizapata
  * License:           GPL-3.0
@@ -22,7 +22,7 @@ if (!defined('WPINC')) {
 	die;
 }
 
-define('VIZAPATA_SW_INTEGRATION_VERSION', '1.0.0');
+define('VIZAPATA_SW_INTEGRATION_VERSION', '1.1.0');
 
 function activate_vizapata_sw_integration()
 {
