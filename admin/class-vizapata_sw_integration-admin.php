@@ -49,6 +49,7 @@ class Vizapata_sw_integration_Admin
 
 	public function woocommerce_payment_complete($order_id)
 	{
+		if (invoice_exists($order_id)) return;
 		$siigo_proxy = new Vizapata_Siigo_Proxy();
 		$order = wc_get_order($order_id);
 		$local_customer = $this->build_customer_order($order);
@@ -202,7 +203,7 @@ class Vizapata_sw_integration_Admin
 	{
 		if (isset($_GET['post']) && isset($_GET['action']) && $_GET['action'] === 'download-invoice') {
 			check_admin_referer('_order' . $_GET['post']);
-			
+
 			$order = wc_get_order($_GET['post']);
 			$is_paid = $order->is_paid();
 			$invoice_id = get_post_meta($_GET['post'], '_siigo_invoice_id', true);
@@ -229,7 +230,8 @@ class Vizapata_sw_integration_Admin
 		}
 	}
 
-	public function invoice_exists($order_id){
+	public function invoice_exists($order_id)
+	{
 		return !empty(get_post_meta($order_id, '_siigo_invoice_id', true));
 	}
 }
