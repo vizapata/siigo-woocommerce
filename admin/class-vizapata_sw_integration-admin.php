@@ -88,7 +88,7 @@ class Vizapata_sw_integration_Admin
 		};
 		$siigo_proxy = new Vizapata_Siigo_Proxy();
 		$order = wc_get_order($order_id);
-		$local_customer = $this->build_customer_order($order);
+		$local_customer = $this->build_customer($order);
 
 		try {
 			$siigo_proxy->authenticate();
@@ -176,7 +176,7 @@ class Vizapata_sw_integration_Admin
 		return $local_order;
 	}
 
-	private function build_customer_order($order)
+	private function build_customer($order)
 	{
 		$order_meta = get_post_meta($order->get_id());
 		$codes = $this->load_location_codes();
@@ -197,15 +197,15 @@ class Vizapata_sw_integration_Admin
 			'number' => $order_meta['_billing_phone'][0],
 		);
 		$contacts = array(
-			'first_name' => $order_meta['_billing_firstname'][0],
-			'last_name' => $order_meta['_billing_lastname'][0],
+			'first_name' => $order_meta['_billing_first_name'][0],
+			'last_name' => $order_meta['_billing_last_name'][0],
 			'email' => $order_meta['_billing_email'][0],
 			'phone' => $billing_pone,
 		);
 
 		if ($is_person) {
-			array_push($name, $order_meta['_billing_firstname'][0]);
-			array_push($name, $order_meta['_billing_lastname'][0]);
+			array_push($name, $order_meta['_billing_first_name'][0]);
+			array_push($name, $order_meta['_billing_last_name'][0]);
 		} else {
 			array_push($name, $order_meta['_billing_company'][0]);
 			$contacts['first_name'] = $order_meta['_billing_contact_firstname'][0];
@@ -224,7 +224,7 @@ class Vizapata_sw_integration_Admin
 				array("code" => "R-99-PN")
 			),
 			'address' => array(
-				'address' => $order_meta['_billing_address'][0],
+				'address' => $order_meta['_billing_address_1'][0] . ' ' . $order_meta['_billing_address_2'][0],
 				'city' => array(
 					'country_code' => $country_code,
 					'city_code' => $billing_city_code,
