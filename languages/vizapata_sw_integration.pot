@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Siigo Woocommerce Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-02 00:26+0000\n"
+"POT-Creation-Date: 2021-10-02 00:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -39,14 +39,11 @@ msgid "API Key"
 msgstr ""
 
 #: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:177
-msgid "Billing parameters ussed to generate the invoices"
-msgstr ""
-
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:175
-msgid "Billing settigns"
+msgid "Billing parameters used to generate the invoices"
 msgstr ""
 
 #: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:61
+#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:175
 msgid "Billing settings"
 msgstr ""
 
@@ -200,7 +197,7 @@ msgstr ""
 
 #: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:138
 msgid ""
-"The product taht will be act as shipping method. It will be included in all "
+"The product that will be act as shipping method. It will be included in all "
 "invoices"
 msgstr ""
 

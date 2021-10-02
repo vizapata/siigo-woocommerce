@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Siigo Woocommerce Integration\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-02 00:26+0000\n"
-"PO-Revision-Date: 2021-10-02 00:38+0000\n"
+"PO-Revision-Date: 2021-10-02 00:44+0000\n"
 "Last-Translator: Victor Zapata\n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -42,14 +42,12 @@ msgid "API Key"
 msgstr "API Key"
 
 #: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:177
-msgid "Billing parameters ussed to generate the invoices"
-msgstr "Parámetros de facturación"
-
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:175
-msgid "Billing settigns"
-msgstr "Ajustes de facturación"
+#| msgid "Billing parameters ussed to generate the invoices"
+msgid "Billing parameters used to generate the invoices"
+msgstr "Parámetros de facturación necesarios para generar las facturas"
 
 #: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:61
+#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:175
 msgid "Billing settings"
 msgstr "Ajustes de facturación"
 
@@ -211,10 +209,15 @@ msgid "The payment type that will be associated to the invoices"
 msgstr "El tipo de pago que se asociará a las facturas"
 
 #: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:138
+#| msgid ""
+#| "The product taht will be act as shipping method. It will be included in "
+#| "all invoices"
 msgid ""
-"The product taht will be act as shipping method. It will be included in all "
+"The product that will be act as shipping method. It will be included in all "
 "invoices"
-msgstr "EL pro"
+msgstr ""
+"EL producto que se utilizará como método de envío. Será incluido en todas "
+"las facturas"
 
 #: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:79
 msgid "The seller associated to the orders."
