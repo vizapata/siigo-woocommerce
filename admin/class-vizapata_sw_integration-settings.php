@@ -135,7 +135,7 @@ class Vizapata_sw_integration_Settings
           'id'   => 'wc_settings_woo_siigo_shipping_id',
           'name' => __('Shipping method', 'vizapata_sw_integration'),
           'type' => 'select',
-          'desc' => __('The product taht will be act as shipping method. It will be included in all invoices', 'vizapata_sw_integration'),
+          'desc' => __('The product that will be act as shipping method. It will be included in all invoices', 'vizapata_sw_integration'),
           'placeholder'   => __('Shipping method', 'vizapata_sw_integration') . '...',
           'options'   => array(),
         );
@@ -172,9 +172,9 @@ class Vizapata_sw_integration_Settings
         $siigo_settings = array(
           'billing_settings' => array(
             'id'       => 'wc_settings_siigo_settings_section_billing',
-            'name'     => __('Billing settigns', 'vizapata_sw_integration'),
+            'name'     => __('Billing settings', 'vizapata_sw_integration'),
             'type'     => 'title',
-            'desc'     => __('Billing parameters ussed to generate the invoices', 'vizapata_sw_integration'),
+            'desc'     => __('Billing parameters used to generate the invoices', 'vizapata_sw_integration'),
           ),
 
           'invoice_id' => $invoice_setting,
