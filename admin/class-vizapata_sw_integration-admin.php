@@ -76,6 +76,7 @@ class Vizapata_sw_integration_Admin
 
 	public function generate_electronic_invoice($order_id)
 	{
+		ini_set('serialize_precision', -1);
 		$response = array(
 			'error' => false,
 			'message' => '',
