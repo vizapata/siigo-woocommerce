@@ -1038,9 +1038,9 @@
   {
     "cod_depto": "11",
     "cod_mpio": "11001",
-    "dpto": "BOGOTÁ. D.C.",
+    "dpto": "BOGOTÁ",
     "abbr_depto": "BOG",
-    "nom_mpio": "BOGOTÁ. D.C."
+    "nom_mpio": "BOGOTÁ"
   },
   {
     "cod_depto": "13",
