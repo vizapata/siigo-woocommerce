@@ -194,9 +194,7 @@ class Vizapata_sw_integration_Admin
 		$is_person = $person_type == 'Person';
 		$id_type = $is_person ? 13 : 31;
 		$name = array();
-		$billing_pone = array(
-			'number' => $order_meta['_billing_phone'][0],
-		);
+		$billing_pone = $this->build_phone_number($order_meta['_billing_phone'][0]);
 		$contacts = array(
 			'first_name' => $order_meta['_billing_first_name'][0],
 			'last_name' => $order_meta['_billing_last_name'][0],
@@ -281,5 +279,23 @@ class Vizapata_sw_integration_Admin
 	{
 		$invoice_id = $this->load_invoice_id($order_id);
 		return $invoice_id !== false && !empty($invoice_id);
+	}
+
+	function build_phone_number($number)
+	{
+		$n = $this->remove_non_digits($number);
+		$phone_number = array('number' => $n);
+		if (strlen($n) > 10) {
+			$phone_number = array(
+				'indicative' => substr($n, 0, strlen($n) - 10),
+				'number' => substr($n, strlen($n) - 10),
+			);
+		}
+		return $phone_number;
+	}
+
+	function remove_non_digits($string)
+	{
+		return preg_replace('/\D/', '', $string);
 	}
 }
