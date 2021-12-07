@@ -89,12 +89,12 @@ class Vizapata_sw_integration_Admin
 			'message' => '',
 		);
 
+		$order_id = $order->get_id();
 		if ($this->invoice_exists($order_id)) {
 			$response['error'] = true;
 			$response['message'] = __('This order already has an electronic invoice');
 			return $response;
 		};
-		$order_id = $order->get_id();
 		$local_customer = $this->build_customer($order);
 		$siigo_proxy = new Vizapata_Siigo_Proxy();
 
