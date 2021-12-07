@@ -81,7 +81,7 @@ class Vizapata_sw_integration_Admin
 		wp_send_json($response);
 	}
 
-	public function generate_electronic_invoice($order_id, $payment_id)
+	public function generate_electronic_invoice($order, $payment_id)
 	{
 		ini_set('serialize_precision', -1);
 		$response = array(
@@ -94,11 +94,12 @@ class Vizapata_sw_integration_Admin
 			$response['message'] = __('This order already has an electronic invoice');
 			return $response;
 		};
-		$siigo_proxy = new Vizapata_Siigo_Proxy();
-		$order_id = $order->get_id(); // TODO: Check this
+		$order_id = $order->get_id();
 		$local_customer = $this->build_customer($order);
+		$siigo_proxy = new Vizapata_Siigo_Proxy();
 
 		try {
+			$payment_type = $this->find_payment_by_id($payment_id);
 			$siigo_proxy->authenticate();
 			$remote_customer = $siigo_proxy->findCustomerByDocument($local_customer['identification']);
 			if ($remote_customer === false) {
@@ -106,10 +107,12 @@ class Vizapata_sw_integration_Admin
 			}
 			$taxes = $siigo_proxy->get_taxes();
 			$local_order = $this->build_order($order, $local_customer, $taxes, $payment_id);
-			update_post_meta($order_id, '_siigo_customer_id', $remote_customer->id);
 			$remote_order = $siigo_proxy->createInvoice($local_order);
+			update_post_meta($order_id, '_siigo_customer_id', $remote_customer->id);
 			update_post_meta($order_id, '_siigo_invoice_id', $remote_order->id);
 			update_post_meta($order_id, '_siigo_invoice_name', $remote_order->name);
+			update_post_meta($order_id, '_siigo_payment_id', $payment_type->id);
+			update_post_meta($order_id, '_siigo_payment_name', $payment_type->name);
 
 			$response['message'] = sprintf(__('Invoice created with document number: %s', 'vizapata_sw_integration'), $remote_order->name);
 			$order->add_order_note($response['message']);
@@ -119,6 +122,15 @@ class Vizapata_sw_integration_Admin
 			$order->add_order_note($response['message']);
 		}
 		return $response;
+	}
+
+	private function find_payment_by_id($payment_id)
+	{
+		$payments = get_option('wc_settings_woo_siigo_payment_type_list');
+		foreach ($payments as $payment_type) {
+			if ($payment_type->id == $payment_id) return $payment_type;
+		}
+		throw new Exception('Unknown payment method. Please review the configuration and try generating the electronic invoice again', 'vizapata_sw_integration');
 	}
 
 	private function find_tax_by_id($taxes, $tax_id)
