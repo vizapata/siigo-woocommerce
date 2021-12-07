@@ -116,6 +116,7 @@ class Vizapata_sw_integration_Settings
         }
 
         $list = $siigo_proxy->get_payment_types();
+        update_option('wc_settings_woo_siigo_payment_type_list', $list);
         $payment_types_setting =  array(
           'id'   => 'wc_settings_woo_siigo_payment_type_id',
           'name' => __('Payment type', 'vizapata_sw_integration'),
@@ -125,9 +126,7 @@ class Vizapata_sw_integration_Settings
           'options'   => array(),
         );
         foreach ($list as $item) {
-          if ($item->active) {
-            $payment_types_setting['options'][$item->id] = $item->name;
-          }
+          $payment_types_setting['options'][$item->id] = $item->name;
         }
 
         $list = $siigo_proxy->get_products();

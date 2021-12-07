@@ -134,9 +134,21 @@ class Vizapata_Siigo_Proxy
     throw new Exception($error);
   }
 
+  private function get_list_filtered_by_active($api, $queryParams = array(), $pathVariables = array())
+  {
+    $list = $this->get_list($api, $queryParams, $pathVariables);
+    $active_items = array();
+    foreach ($list as $item) {
+      if ($item->active) {
+        array_push($active_items, $item);
+      }
+    }
+    return $active_items;
+  }
+
   public function generate_invoice_pdf($invoice_id)
   {
-    $invoice_data = $this->get_list('invoice_pdf', array(), array( 'INVOICE_ID' => $invoice_id));
+    $invoice_data = $this->get_list('invoice_pdf', array(), array('INVOICE_ID' => $invoice_id));
     return $invoice_data->base64;
   }
 
@@ -162,7 +174,7 @@ class Vizapata_Siigo_Proxy
   }
   public function get_payment_types()
   {
-    return $this->get_list('payment-types', array('document_type' => 'FV'));
+    return $this->get_list_filtered_by_active('payment-types', array('document_type' => 'FV'));
   }
   public function get_taxes()
   {
