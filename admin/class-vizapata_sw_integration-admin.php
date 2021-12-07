@@ -49,13 +49,19 @@ class Vizapata_sw_integration_Admin
 
 	public function woocommerce_payment_complete($order_id)
 	{
-		$this->generate_electronic_invoice($order_id);
+		$order = wc_get_order($order_id);
+		if ($order->get_payment_method() == 'epayco') {
+			$this->generate_electronic_invoice($order, get_option('wc_settings_woo_siigo_payment_type_id'));
+		}
 	}
 
 	public function woocommerce_order_status_changed($order_id, $from, $to)
 	{
 		if ($to === 'completed') {
-			$this->generate_electronic_invoice($order_id);
+			$order = wc_get_order($order_id);
+			if ($order->get_payment_method() == 'epayco') {
+				$this->generate_electronic_invoice($order, get_option('wc_settings_woo_siigo_payment_type_id'));
+			}
 		}
 	}
 
@@ -63,7 +69,8 @@ class Vizapata_sw_integration_Admin
 	{
 		check_ajax_referer('create-electronic-invoice', 'security');
 		$order_id = absint($_POST['post_id']);
-		$response = $this->generate_electronic_invoice($order_id);
+		$payment_id = absint($_POST['payment_id']);
+		$response = $this->generate_electronic_invoice(wc_get_order($order_id), $payment_id);
 		if (!$response['error']) {
 			ob_start();
 			$order = new Vizapata_sw_integration_Order();
@@ -74,7 +81,7 @@ class Vizapata_sw_integration_Admin
 		wp_send_json($response);
 	}
 
-	public function generate_electronic_invoice($order_id)
+	public function generate_electronic_invoice($order_id, $payment_id)
 	{
 		ini_set('serialize_precision', -1);
 		$response = array(
@@ -88,7 +95,7 @@ class Vizapata_sw_integration_Admin
 			return $response;
 		};
 		$siigo_proxy = new Vizapata_Siigo_Proxy();
-		$order = wc_get_order($order_id);
+		$order_id = $order->get_id(); // TODO: Check this
 		$local_customer = $this->build_customer($order);
 
 		try {
@@ -98,7 +105,7 @@ class Vizapata_sw_integration_Admin
 				$remote_customer = $siigo_proxy->createCustomer($local_customer);
 			}
 			$taxes = $siigo_proxy->get_taxes();
-			$local_order = $this->build_order($order, $local_customer, $taxes);
+			$local_order = $this->build_order($order, $local_customer, $taxes, $payment_id);
 			update_post_meta($order_id, '_siigo_customer_id', $remote_customer->id);
 			$remote_order = $siigo_proxy->createInvoice($local_order);
 			update_post_meta($order_id, '_siigo_invoice_id', $remote_order->id);
@@ -122,7 +129,7 @@ class Vizapata_sw_integration_Admin
 		return array_values($tax)[0];
 	}
 
-	private function build_order($order, $customer, $taxes)
+	private function build_order($order, $customer, $taxes, $payment_id)
 	{
 		$items = array();
 		$product_tax  = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_taxes_id'));
@@ -169,7 +176,7 @@ class Vizapata_sw_integration_Admin
 			'observations' => get_option('wc_settings_woo_siigo_observations'),
 			'payments' => array(
 				array(
-					'id' => get_option('wc_settings_woo_siigo_payment_type_id'),
+					'id' => $payment_id,
 					'value' => $order->get_total(),
 				)
 			),
