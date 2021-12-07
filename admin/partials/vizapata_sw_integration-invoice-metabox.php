@@ -41,7 +41,7 @@ $is_paid = $order->is_paid();
   ?>
     <p>
       <?php print sprintf(__('Electronic invoice %s has been generated', 'vizapata_sw_integration'), '<strong>' . $invoice_number . '</strong>'); ?>
-      <?php print sprintf(__('The payment was registered to "%s"', 'vizapata_sw_integration'), $payment_name); ?>
+      <?php print sprintf(__('The payment was registered to "%s"', 'vizapata_sw_integration'), '<strong>' .$payment_name .'</strong>'); ?>
     </p>
     <a href="<?php print wp_nonce_url($url, '_order' . $post->ID); ?>" target="_blank" class="button button-secondary"><?php _e('Download electronic invoice', 'vizapata_sw_integration'); ?></a>
   <?php } ?>

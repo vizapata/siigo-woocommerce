@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Siigo Woocommerce Integration\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-02 00:26+0000\n"
-"PO-Revision-Date: 2021-10-02 00:44+0000\n"
+"PO-Revision-Date: 2021-12-07 23:18+0000\n"
 "Last-Translator: Victor Zapata\n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -23,57 +23,61 @@ msgstr ""
 "Permite la integración entre la tienda en línea y el sistema de facturación "
 "de Siigo Nube"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:193
+#: admin/class-vizapata_sw_integration-settings.php:192
 msgid "Additional observations"
 msgstr "Observaciones adicionales"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:192
+#: admin/class-vizapata_sw_integration-settings.php:191
 msgid "Additional observations to include in generated invoices"
 msgstr ""
 "Observaciones o comentarios adicionales que se añadirán en las facturas "
 "generadas"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:26
+#: admin/class-vizapata_sw_integration-settings.php:26
 msgid "API connection"
 msgstr "Conexión con el API"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:47
+#: admin/class-vizapata_sw_integration-settings.php:47
 msgid "API Key"
 msgstr "API Key"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:177
+#: admin/class-vizapata_sw_integration-settings.php:176
 #| msgid "Billing parameters ussed to generate the invoices"
 msgid "Billing parameters used to generate the invoices"
 msgstr "Parámetros de facturación necesarios para generar las facturas"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:61
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:175
+#: admin/class-vizapata_sw_integration-settings.php:61
+#: admin/class-vizapata_sw_integration-settings.php:174
 msgid "Billing settings"
 msgstr "Ajustes de facturación"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:205
+#: admin/partials/vizapata_sw_integration-invoice-metabox.php:17
+msgid "Choose payment method"
+msgstr "Seleccione el método de pago"
+
+#: admin/class-vizapata_sw_integration-settings.php:204
 msgid "Connection error"
 msgstr "Error de conexión"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:106
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:109
+#: admin/class-vizapata_sw_integration-settings.php:106
+#: admin/class-vizapata_sw_integration-settings.php:109
 msgid "Document type"
 msgstr "Tipo de documento"
 
-#: ../../../../../siigo-woocommerce/admin/partials/vizapata_sw_integration-invoice-metabox.php:24
+#: admin/partials/vizapata_sw_integration-invoice-metabox.php:46
 msgid "Download electronic invoice"
 msgstr "Descargar factura electrónica"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-order.php:7
+#: admin/class-vizapata_sw_integration-order.php:7
 msgid "Electronic invoice"
 msgstr "Factura electrónica"
 
-#: ../../../../../siigo-woocommerce/admin/partials/vizapata_sw_integration-invoice-metabox.php:23
+#: admin/partials/vizapata_sw_integration-invoice-metabox.php:43
 #, php-format
 msgid "Electronic invoice %s has been generated"
 msgstr "Se generó la factura electrónica %s "
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:212
+#: admin/class-vizapata_sw_integration-settings.php:211
 msgid ""
 "Error connecting to Siigo API. Please verify the connection settings before "
 "continue"
@@ -81,15 +85,15 @@ msgstr ""
 "Error al conectar con Siigo API. Por favor verifique los parámetros de "
 "conexión antes de continuar"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-admin.php:110
+#: admin/class-vizapata_sw_integration-admin.php:121
 msgid "Error during invoice creation: "
 msgstr "Error durante la creación de la factura: "
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-admin.php:266
+#: admin/class-vizapata_sw_integration-admin.php:284
 msgid "Error during invoice request: "
 msgstr "Error durante la solicitud de la factura: "
 
-#: ../../../../../siigo-woocommerce/admin/partials/vizapata_sw_integration-invoice-metabox.php:13
+#: admin/partials/vizapata_sw_integration-invoice-metabox.php:32
 msgid "Generate electronic invoice"
 msgstr "Generar factura electrónica"
 
@@ -101,45 +105,45 @@ msgstr "https://github.com/vizapata"
 msgid "https://github.com/vizapata/siigo-woocommerce"
 msgstr "https://github.com/vizapata/siigo-woocommerce"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-admin.php:106
+#: admin/class-vizapata_sw_integration-admin.php:117
 #, php-format
 msgid "Invoice created with document number: %s"
 msgstr "Factura creada con número de documento: %s"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:190
+#: admin/class-vizapata_sw_integration-settings.php:189
 msgid "Invoice observations"
 msgstr "Observaciones de la factura"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:121
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:124
+#: admin/class-vizapata_sw_integration-settings.php:122
+#: admin/class-vizapata_sw_integration-settings.php:125
 msgid "Payment type"
 msgstr "Tipo de pago"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:207
+#: admin/class-vizapata_sw_integration-settings.php:206
 msgid ""
 "Please check that the URL, username and API key are correct. Save the changes"
 msgstr ""
 "Por favor verifique que la URL, nombre de usuario y API Key sean correctos. "
 "Guarde los cambios"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:63
+#: admin/class-vizapata_sw_integration-settings.php:63
 msgid "Please complete the API connection settings before continue"
 msgstr ""
 "Por favor complete los parámetros de conexión con el API antes de continuar"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:35
+#: admin/class-vizapata_sw_integration-settings.php:35
 msgid "Please use the URL without the trailing slash"
 msgstr "Por favor use la URL sin la barra al final (/)"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:151
+#: admin/class-vizapata_sw_integration-settings.php:150
 msgid "Product tax"
 msgstr "Interés para los productos"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:50
+#: admin/class-vizapata_sw_integration-settings.php:50
 msgid "Put here your API key"
 msgstr "Ingrese aquí el API Key"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:28
+#: admin/class-vizapata_sw_integration-settings.php:28
 msgid ""
 "Required data to connect with Siigo API. Please refer to your Siigo cloud "
 "documentation to get these parameters"
@@ -147,34 +151,34 @@ msgstr ""
 "Datos requeridos para establecer conexión con Siigo API. Por favor "
 "comuníquese con el equipo de soporte de Siigo para obtener estos parámetros"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:154
+#: admin/class-vizapata_sw_integration-settings.php:153
 msgid "Select tax"
 msgstr "Seleccione el impuesto"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:77
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:80
+#: admin/class-vizapata_sw_integration-settings.php:77
+#: admin/class-vizapata_sw_integration-settings.php:80
 msgid "Seller"
 msgstr "Vendedor"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:136
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:139
+#: admin/class-vizapata_sw_integration-settings.php:135
+#: admin/class-vizapata_sw_integration-settings.php:138
 msgid "Shipping method"
 msgstr "Método de envío"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:159
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:162
+#: admin/class-vizapata_sw_integration-settings.php:158
+#: admin/class-vizapata_sw_integration-settings.php:161
 msgid "Shipping taxes"
 msgstr "Impuestos de envío"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:32
+#: admin/class-vizapata_sw_integration-settings.php:32
 msgid "Siigo API URL"
 msgstr "URL del API de Siigo"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-admin.php:26
+#: admin/class-vizapata_sw_integration-admin.php:26
 msgid "Siigo integration settings"
 msgstr "Configuración de la integración con Siigo"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:7
+#: admin/class-vizapata_sw_integration-settings.php:7
 msgid "Siigo Settings"
 msgstr "Configuración de Siigo"
 
@@ -182,33 +186,38 @@ msgstr "Configuración de Siigo"
 msgid "Siigo Woocommerce Integration"
 msgstr "Integración entre WooCommerce y Siigo"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:49
+#: admin/class-vizapata_sw_integration-settings.php:49
 msgid "The API KEY used to connect with the Siigo cloud"
 msgstr "EL API Key requerida para conectarse con Siigo cloud"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:108
+#: admin/class-vizapata_sw_integration-settings.php:108
 msgid "The document type that will be generated"
 msgstr "El tipo de documento que será generado"
 
-#: ../../../../../siigo-woocommerce/admin/partials/vizapata_sw_integration-invoice-metabox.php:9
+#: admin/partials/vizapata_sw_integration-invoice-metabox.php:12
 msgid "The order has no payment yet"
 msgstr "El pedido no tiene registrado un pago"
 
-#: ../../../../../siigo-woocommerce/admin/partials/vizapata_sw_integration-invoice-metabox.php:11
+#: admin/partials/vizapata_sw_integration-invoice-metabox.php:14
 msgid "The order is paid but the electronic invoice was not generated yet"
 msgstr ""
 "El pedido tiene registrado un pago, pero la factura electrónica no se ha "
 "generado"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-admin.php:269
+#: admin/class-vizapata_sw_integration-admin.php:287
 msgid "The order that you are looking for does not have any electronic invoice"
 msgstr "El pedido que está buscando no tiene ninguna factura electrónica"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:123
+#: admin/class-vizapata_sw_integration-settings.php:124
 msgid "The payment type that will be associated to the invoices"
 msgstr "El tipo de pago que se asociará a las facturas"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:138
+#: admin/partials/vizapata_sw_integration-invoice-metabox.php:44
+#, php-format
+msgid "The payment was registered to \"%s\""
+msgstr "El pago se registró en \"%s\""
+
+#: admin/class-vizapata_sw_integration-settings.php:137
 #| msgid ""
 #| "The product taht will be act as shipping method. It will be included in "
 #| "all invoices"
@@ -219,36 +228,36 @@ msgstr ""
 "EL producto que se utilizará como método de envío. Será incluido en todas "
 "las facturas"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:79
+#: admin/class-vizapata_sw_integration-settings.php:79
 msgid "The seller associated to the orders."
 msgstr "El vendedor que se asociará a las facturas"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:153
+#: admin/class-vizapata_sw_integration-settings.php:152
 msgid "The taxes aplicable for all products."
 msgstr "El tipo de impuesto que se aplicará a todos los productos"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:161
+#: admin/class-vizapata_sw_integration-settings.php:160
 msgid "The taxes that will be apply to the shipping method"
 msgstr "El impuesto que se aplicará al método de envío"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:34
+#: admin/class-vizapata_sw_integration-settings.php:34
 msgid "The URL of the Siigo cloud"
 msgstr "La dirección URL del API de Siigo Nube"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:42
+#: admin/class-vizapata_sw_integration-settings.php:42
 msgid "The username used to connect with the Siigo cloud"
 msgstr "En nombre de usuario para conectarse con Siigo"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:94
+#: admin/class-vizapata_sw_integration-settings.php:94
 msgid "The warehouse where the products will be shipped from"
 msgstr "La bodega desde donde se despacharán los productos"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-admin.php:237
+#: admin/class-vizapata_sw_integration-admin.php:255
 msgid "User created by the Woocommerce-Siigo integration app"
 msgstr ""
 "Usuario creado por la integración entre la tienda en línea y Siigo Nube"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:40
+#: admin/class-vizapata_sw_integration-settings.php:40
 msgid "Username"
 msgstr "Nombre de usuario"
 
@@ -256,7 +265,7 @@ msgstr "Nombre de usuario"
 msgid "Victor Zapata"
 msgstr "Victor Zapata"
 
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:92
-#: ../../../../../siigo-woocommerce/admin/class-vizapata_sw_integration-settings.php:95
+#: admin/class-vizapata_sw_integration-settings.php:92
+#: admin/class-vizapata_sw_integration-settings.php:95
 msgid "Warehouse"
 msgstr "Bodega"
