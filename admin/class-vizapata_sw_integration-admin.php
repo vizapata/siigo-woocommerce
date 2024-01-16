@@ -5,6 +5,9 @@ class Vizapata_sw_integration_Admin
 
 	private $plugin_name;
 	private $version;
+	private const product42 = 2128;
+	private const productPX = 2111;
+	private const second_tax_id = 8489;
 	private const state_code_field = 'cod_depto';
 	private const city_code_field = 'cod_mpio';
 	private const state_name_field = 'dpto';
@@ -143,8 +146,7 @@ class Vizapata_sw_integration_Admin
 
 	private function build_order($order, $customer, $taxes, $payment_id)
 	{
-		// $items = $this->build_items_with_single_tax($order, $taxes);
-		$items = $this->build_items_with_second_tax($order, $taxes);
+		$items = $this->build_items($order, $taxes);
 		$shipping_tax = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_shipping_taxes_id'));
 
 		array_push($items, array(
@@ -179,57 +181,55 @@ class Vizapata_sw_integration_Admin
 		);
 		return $local_order;
 	}
-
-	private function build_items_with_single_tax($order, $taxes)
+	private function build_items($order, $taxes)
 	{
 		$items = array();
 		$product_tax  = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_taxes_id'));
 		foreach ($order->get_items() as $item) {
-			$product = $item->get_product();
-			$new_item = array(
-				'code' => $product->get_sku(),
-				'description' => $product->get_name(),
-				'price' => round($product->get_price() * 100 / (100 + $product_tax->percentage), 6),
-				'quantity' => $item->get_quantity(),
-				'warehouse' => get_option('wc_settings_woo_siigo_warehouse_id'),
-				'taxes' => array(
-					array(
-						'id' => $product_tax->id,
-					)
-				),
-			);
-			array_push($items, $new_item);
+			array_merge($items, $this->build_item($item, $product_tax));
 		}
 		return $items;
 	}
 
-	private function build_items_with_second_tax($order, $taxes)
-	{
+	private function build_item($item, $product_tax){
+		$product = $item->get_product();
 		$items = array();
-		// TODO: Load tax ID fom existing configuration
-		$second_tax_id = 8489;
-		$product_tax  = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_taxes_id'));
-		foreach ($order->get_items() as $item) {
-			$product = $item->get_product();
-			$tax_value = $this->get_second_tax_value_by_sku($product->get_sku());
-			$new_item = array(
-				'code' => $product->get_sku(),
-				'description' => $product->get_name(),
-				'price' => round(($product->get_price() - $tax_value) * 100 / (100 + $product_tax->percentage), 6),
-				'quantity' => $item->get_quantity(),
-				'warehouse' => get_option('wc_settings_woo_siigo_warehouse_id'),
-				'taxes' => array(
-					array(
-						'id' => $product_tax->id,
-					),
-					array(
-						'id' => $second_tax_id,
-					),
-				),
-			);
-			array_push($items, $new_item);
+		if ($product->get_sku() == "RHC03"){
+				$items = $this->build_multiple_items($item, $product_tax);
+		}else{
+			$items = array($this->build_single_item($item, $product_tax));
 		}
 		return $items;
+	}
+
+	private function build_multiple_items($item, $product_tax){
+		return array(
+			$this->build_array_item(wc_get_product( self::product42 ), $item, $product_tax),
+			$this->build_array_item(wc_get_product( self::productPX ), $item, $product_tax)
+		);
+	}
+
+	private function build_single_item($item, $product_tax){
+		return $this->build_array_item($item->get_product(), $item, $product_tax);
+	}
+	
+	private function build_array_item($product, $item, $product_tax){
+		$tax_value = $this->get_second_tax_value_by_sku($product->get_sku());
+		return array(
+			'code' => $product->get_sku(),
+			'description' => $product->get_name(),
+			'price' => round(($product->get_price() - $tax_value) * 100 / (100 + $product_tax->percentage), 6),
+			'quantity' => $item->get_quantity(),
+			'warehouse' => get_option('wc_settings_woo_siigo_warehouse_id'),
+			'taxes' => array(
+				array(
+					'id' => $product_tax->id,
+				),
+				array(
+					'id' => self::second_tax_id,
+				),
+			),
+		);
 	}
 
 	private function get_second_tax_value_by_sku($sku)
