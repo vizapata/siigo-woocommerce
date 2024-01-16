@@ -19,6 +19,7 @@ class Vizapata_Siigo_Proxy
       'warehouses' => $baseApiUrl . '/v1/warehouses',
       'document-types' => $baseApiUrl . '/v1/document-types',
       'payment-types' => $baseApiUrl . '/v1/payment-types',
+      'cost-centers' => $baseApiUrl . '/v1/cost-centers',
       'taxes' => $baseApiUrl . '/v1/taxes',
     );
   }
@@ -171,6 +172,10 @@ class Vizapata_Siigo_Proxy
   public function get_document_types()
   {
     return $this->get_list('document-types', array('type' => 'FV'));
+  }
+  public function get_cost_centers()
+  {
+    return $this->get_list('cost-centers');
   }
   public function get_payment_types()
   {

@@ -129,6 +129,19 @@ class Vizapata_sw_integration_Settings
           $payment_types_setting['options'][$item->id] = $item->name;
         }
 
+        $list = $siigo_proxy->get_cost_centers();
+        $cost_center_setting =  array(
+          'id'   => 'wc_settings_woo_siigo_cost_center_id',
+          'name' => __('Cost center', 'vizapata_sw_integration'),
+          'type' => 'select',
+          'desc' => __('The cost center that will be applied to invoices', 'vizapata_sw_integration'),
+          'placeholder'   => __('Cost center', 'vizapata_sw_integration') . '...',
+          'options'   => array(),
+        );
+        foreach ($list as $item) {
+          $cost_center_setting['options'][$item->id] = $item->name;
+        }
+
         $list = $siigo_proxy->get_products();
         $shipping_setting =  array(
           'id'   => 'wc_settings_woo_siigo_shipping_id',
@@ -178,6 +191,7 @@ class Vizapata_sw_integration_Settings
 
           'invoice_id' => $invoice_setting,
           'taxes_id' => $product_taxes_setting,
+          'cost_center_id' => $cost_center_setting,
           'seller_id' => $user_setting,
           'warehouse_id' => $warehouse_setting,
           'payment_type_id' => $payment_types_setting,

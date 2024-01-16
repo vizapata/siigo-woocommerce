@@ -143,25 +143,8 @@ class Vizapata_sw_integration_Admin
 
 	private function build_order($order, $customer, $taxes, $payment_id)
 	{
-		$items = array();
-		$product_tax  = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_taxes_id'));
-
-		foreach ($order->get_items() as $item) {
-			$product = $item->get_product();
-			$new_item = array(
-				'code' => $product->get_sku(),
-				'description' => $product->get_name(),
-				'price' => round($product->get_price() * 100 / (100 + $product_tax->percentage), 6),
-				'quantity' => $item->get_quantity(),
-				'warehouse' => get_option('wc_settings_woo_siigo_warehouse_id'),
-				'taxes' => array(
-					array(
-						'id' => $product_tax->id,
-					)
-				),
-			);
-			array_push($items, $new_item);
-		}
+		// $items = $this->build_items_with_single_tax($order, $taxes);
+		$items = $this->build_items_with_second_tax($order, $taxes);
 		$shipping_tax = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_shipping_taxes_id'));
 
 		array_push($items, array(
@@ -184,6 +167,7 @@ class Vizapata_sw_integration_Admin
 			'date' => date('Y-m-d'),
 			'customer' => $customer,
 			'seller' => get_option('wc_settings_woo_siigo_seller_id'),
+			'cost_center' => get_option('wc_settings_woo_siigo_cost_center_id'),
 			'items' => $items,
 			'observations' => get_option('wc_settings_woo_siigo_observations'),
 			'payments' => array(
@@ -194,6 +178,71 @@ class Vizapata_sw_integration_Admin
 			),
 		);
 		return $local_order;
+	}
+
+	private function build_items_with_single_tax($order, $taxes)
+	{
+		$items = array();
+		$product_tax  = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_taxes_id'));
+		foreach ($order->get_items() as $item) {
+			$product = $item->get_product();
+			$new_item = array(
+				'code' => $product->get_sku(),
+				'description' => $product->get_name(),
+				'price' => round($product->get_price() * 100 / (100 + $product_tax->percentage), 6),
+				'quantity' => $item->get_quantity(),
+				'warehouse' => get_option('wc_settings_woo_siigo_warehouse_id'),
+				'taxes' => array(
+					array(
+						'id' => $product_tax->id,
+					)
+				),
+			);
+			array_push($items, $new_item);
+		}
+		return $items;
+	}
+
+	private function build_items_with_second_tax($order, $taxes)
+	{
+		$items = array();
+		// TODO: Load tax ID fom existing configuration
+		$second_tax_id = 8489;
+		$product_tax  = $this->find_tax_by_id($taxes, get_option('wc_settings_woo_siigo_taxes_id'));
+		foreach ($order->get_items() as $item) {
+			$product = $item->get_product();
+			$tax_value = $this->get_second_tax_value_by_sku($product->get_sku());
+			$new_item = array(
+				'code' => $product->get_sku(),
+				'description' => $product->get_name(),
+				'price' => round(($product->get_price() - $tax_value) * 100 / (100 + $product_tax->percentage), 6),
+				'quantity' => $item->get_quantity(),
+				'warehouse' => get_option('wc_settings_woo_siigo_warehouse_id'),
+				'taxes' => array(
+					array(
+						'id' => $product_tax->id,
+					),
+					array(
+						'id' => $second_tax_id,
+					),
+				),
+			);
+			array_push($items, $new_item);
+		}
+		return $items;
+	}
+
+	private function get_second_tax_value_by_sku($sku)
+	{
+		// TODO: Load the second tax from product meta value
+		switch ($sku) {
+			case "RHC01":
+				return 28777; // 42º
+			case "RHC02":
+				return 39022; // PX
+			case "RHC03":
+				return 67799; // Box
+		}
 	}
 
 	private function build_customer($order)
@@ -300,7 +349,7 @@ class Vizapata_sw_integration_Admin
 		return $invoice_id !== false && !empty($invoice_id);
 	}
 
-	function build_phone_number($number)
+	private function build_phone_number($number)
 	{
 		$n = $this->remove_non_digits($number);
 		$phone_number = array('number' => $n);
@@ -313,7 +362,7 @@ class Vizapata_sw_integration_Admin
 		return $phone_number;
 	}
 
-	function remove_non_digits($string)
+	private function remove_non_digits($string)
 	{
 		return preg_replace('/\D/', '', $string);
 	}
