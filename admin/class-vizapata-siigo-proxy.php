@@ -47,14 +47,19 @@ class Vizapata_Siigo_Proxy
     }
   }
 
+  private function createHeaders(){
+    return array(
+      'content-type' => 'application/json; charset=utf-8',
+      'Authorization' => 'Bearer ' . $this->authInfo->access_token,
+      'Partner-ID' => 'web-ron-calibio-custom-integration'
+    );
+  }
+
   public function findCustomerByDocument($documentNumber)
   {
     if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
     $request = array(
-      'headers' => array(
-        'content-type' => 'application/json; charset=utf-8',
-        'Authorization' => 'Bearer ' . $this->authInfo->access_token
-      )
+      'headers' => $this->createHeaders()
     );
 
     $response = wp_safe_remote_get($this->apiUrls['customers'] . '?identification=' . $documentNumber, $request);
@@ -74,10 +79,7 @@ class Vizapata_Siigo_Proxy
   {
     if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
     $request = array(
-      'headers' => array(
-        'content-type' => 'application/json; charset=utf-8',
-        'Authorization' => 'Bearer ' . $this->authInfo->access_token
-      ),
+      'headers' => $this->createHeaders(),
       'body' => json_encode($customer),
     );
 
@@ -95,10 +97,7 @@ class Vizapata_Siigo_Proxy
   {
     if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
     $request = array(
-      'headers' => array(
-        'content-type' => 'application/json; charset=utf-8',
-        'Authorization' => 'Bearer ' . $this->authInfo->access_token
-      ),
+      'headers' => $this->createHeaders(),
       'body' => json_encode($order),
     );
 
@@ -116,10 +115,7 @@ class Vizapata_Siigo_Proxy
   {
     if (!$this->isAuthenticated()) throw new Exception('Not authenticated');
     $request = array(
-      'headers' => array(
-        'content-type' => 'application/json; charset=utf-8',
-        'Authorization' => 'Bearer ' . $this->authInfo->access_token
-      )
+      'headers' => $this->createHeaders()
     );
     $url = $this->apiUrls[$api];
     foreach ($pathVariables as $param => $value) {
