@@ -12,6 +12,9 @@ class Vizapata_sw_integration_Admin
 	private const city_code_field = 'cod_mpio';
 	private const state_name_field = 'dpto';
 	private const city_name_field = 'nom_mpio';
+	private const PRODUCT_CODE_CALIBIO_BOX = 'RHC03';
+	private const PRODUCT_CODE_PX = '3I_RCH32';
+	private const PRODUCT_CODE_42 = '3I_RCH31';
 
 	public function __construct($plugin_name, $version)
 	{
@@ -194,7 +197,7 @@ class Vizapata_sw_integration_Admin
 	private function build_item($item, $product_tax){
 		$product = $item->get_product();
 		$items = array();
-		if ($product->get_sku() == "RHC03"){
+		if ($product->get_sku() == self::PRODUCT_CODE_CALIBIO_BOX){
 				$items = $this->build_multiple_items($item, $product_tax);
 		}else{
 			$items = array($this->build_single_item($item, $product_tax));
@@ -236,11 +239,11 @@ class Vizapata_sw_integration_Admin
 	{
 		// TODO: Load the second tax from product meta value
 		switch ($sku) {
-			case "RHC01":
+			case self::PRODUCT_CODE_42:
 				return 28777; // 42º
-			case "RHC02":
+			case self::PRODUCT_CODE_PX:
 				return 39022; // PX
-			case "RHC03":
+			case self::PRODUCT_CODE_CALIBIO_BOX:
 				return 67799; // Box
 		}
 	}

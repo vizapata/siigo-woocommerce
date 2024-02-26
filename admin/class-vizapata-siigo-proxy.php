@@ -3,6 +3,7 @@
 class Vizapata_Siigo_Proxy
 {
   private const ACCESS_TOKEN_LIFESPAN_TRESHOLD = 5 * 1000;
+  private const PARTNER_ID = 'web-ron-calibio-custom-integration';
   private $authInfo;
   private $apiUrls;
 
@@ -28,7 +29,8 @@ class Vizapata_Siigo_Proxy
   {
     $request = array(
       'headers' => array(
-        'content-type' => 'application/json; charset=utf-8'
+        'content-type' => 'application/json; charset=utf-8',
+        'Partner-Id' => self::PARTNER_ID
       ),
       'body' => json_encode(array(
         'username' => get_option('wc_settings_woo_siigo_username'),
@@ -37,6 +39,7 @@ class Vizapata_Siigo_Proxy
     );
 
     $response = wp_safe_remote_post($this->apiUrls['auth'], $request);
+    
 
     if ($this->isResponseOK($response)) {
       $this->authInfo = json_decode($response['body']);
@@ -51,7 +54,7 @@ class Vizapata_Siigo_Proxy
     return array(
       'content-type' => 'application/json; charset=utf-8',
       'Authorization' => 'Bearer ' . $this->authInfo->access_token,
-      'Partner-ID' => 'web-ron-calibio-custom-integration'
+      'Partner-Id' => self::PARTNER_ID
     );
   }
 

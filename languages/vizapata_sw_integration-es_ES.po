@@ -180,7 +180,7 @@ msgstr "Configuración de la integración con Siigo"
 
 #: admin/class-vizapata_sw_integration-settings.php:7
 msgid "Siigo Settings"
-msgstr "Configuración de Siigo"
+msgstr "Siigo"
 
 #. Name of the plugin
 msgid "Siigo Woocommerce Integration"
