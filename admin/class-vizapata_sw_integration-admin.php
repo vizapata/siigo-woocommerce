@@ -13,8 +13,8 @@ class Vizapata_sw_integration_Admin
 	private const state_name_field = 'dpto';
 	private const city_name_field = 'nom_mpio';
 	private const PRODUCT_CODE_CALIBIO_BOX = 'RHC03';
-	private const PRODUCT_CODE_PX = '3I_RCH32';
-	private const PRODUCT_CODE_42 = '3I_RCH31';
+	private const PRODUCT_CODE_PX = '3I_RHC32';
+	private const PRODUCT_CODE_42 = '3I_RHC31';
 
 	public function __construct($plugin_name, $version)
 	{
