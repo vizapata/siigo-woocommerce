@@ -3,7 +3,7 @@
 class Vizapata_Siigo_Proxy
 {
   private const ACCESS_TOKEN_LIFESPAN_TRESHOLD = 5 * 1000;
-  private const PARTNER_ID = 'web-ron-calibio-custom-integration';
+  private const PARTNER_ID = 'webRonCalibioCustomIntegration';
   private $authInfo;
   private $apiUrls;
 
